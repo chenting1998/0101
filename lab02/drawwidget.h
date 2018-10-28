@@ -1,6 +1,5 @@
 #ifndef DRAWWIDGET_H
 #define DRAWWIDGET_H
-
 #include <common.h>
 #include <QWidget>
 #include <QPixmap>
@@ -8,20 +7,16 @@
 #include <QPainter>
 #include <QPalette>
 
-
 class DrawWidget : public QWidget
 {
    Q_OBJECT
 public:
    explicit DrawWidget(QWidget *parent = 0);
-   ~DrawWidget();
+    ~DrawWidget();
 
    void setShapeType(ST::ShapeType type);
    ST::ShapeType shapeType();
    void setDrawnText(QString text);
-
-   void photoset();
-
 
 protected:
    void mousePressEvent (QMouseEvent *e);
@@ -39,7 +34,7 @@ public slots:
    void setWidth(int);
    void setColor(QColor);
    void clear();
-   void photo();
+   void drawpic();
 
 private :
    QPixmap *pix;
@@ -52,5 +47,4 @@ private :
    ST::ShapeType drawType;
    QString drawnText;
 };
-
 #endif // DRAWWIDGET_H
