@@ -11,8 +11,7 @@
 #include <QPainter>
 
 
-
-
+//构造函数  工具栏和绘图窗口的创建
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -31,6 +30,9 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
 }
+
+
+//创建工具栏按键菜单
 void MainWindow::createToolBar ()
 {
    QToolBar *toolBar = addToolBar (tr("Tool"));   //为主窗口创建一个工具栏对象
@@ -46,8 +48,9 @@ void MainWindow::createToolBar ()
    styleComboBox->addItem (tr("点划线(DashDotLine)"), static_cast<int>(Qt::DashDotLine));
    styleComboBox->addItem (tr("连点划线(DashDotDotLine)"), static_cast<int>(Qt::DashDotDotLine));
    connect (styleComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-               this, &MainWindow::penStyleChangged);
-   styleComboBox->setCurrentIndex(1);
+               this, &MainWindow::penStyleChangged);//（下拉框）信号与（画笔风格）槽绑定
+
+   styleComboBox->setCurrentIndex(1);//初始状态
 
 
    // 线宽选择框
@@ -75,7 +78,7 @@ void MainWindow::createToolBar ()
 
 
    //创建图标
-   imageBtn = new QToolButton;
+   //imageBtn = new QToolButton;
 
   // 向工具栏上添加各个控件
    toolBar->addWidget (styleLabel);
@@ -85,16 +88,19 @@ void MainWindow::createToolBar ()
    toolBar->addWidget (colorBtn);
    toolBar->addSeparator();
    toolBar->addWidget (clearBtn);
-   toolBar->addWidget(imageBtn);
+   //toolBar->addWidget(imageBtn);
 }
 
 
+//用户选择不同的画笔风格
 void MainWindow::penStyleChangged (int index)
 {
    Q_UNUSED(index)
    centerFrame->setPenStyle(styleComboBox->currentData().toInt ());
 }
 
+
+//用户选择不同的颜色
 void MainWindow::penColorChangged ()
 {
    QColor color = QColorDialog::getColor (static_cast<int>(FOREGROUND_COLOR),

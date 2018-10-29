@@ -21,20 +21,18 @@ public:
 
 protected:
 
-    void createUserCommandArea();
+    void createUserCommandArea();// 创建用户命令区
 
-    void createUI();
+    void createUI();// 创建界面
 
-    void updateButtonStatus();
+    void updateButtonStatus();//更新按键状态
 
 
 public slots:
     void setPenStyle(int penStyle);
     void setPenWidth(int width=1);
     void setPenColor(QColor color);
-    void clearPaint();
-    //void photoset(); //图片
-
+    void clearPaint();//清除当前绘图
 
 
 protected slots:
@@ -42,8 +40,8 @@ protected slots:
     void on_btnEllipseClicked();
     void on_btnLineClicked();
     void on_btnTriangleClicked();
-    void on_btnTextClicked();
-    void on_edtTextEdited(const QString &text);
+    void on_btnTextClicked();//绘制文本按钮槽函数
+    void on_edtTextEdited(const QString &text);//输入文本响应槽函数
     void on_btnDiamondClicked();//菱形
     void on_btnDrawpicClicked();//图片
 
@@ -60,8 +58,7 @@ private:
     QPushButton* btnText;
     QLineEdit* edtText;
     QPushButton* btnDiamond;
-    QPushButton* bthDrawpic;
-
+    QPushButton* btnDrawpic;
 };
 
 #endif // CENTERFRAME_H

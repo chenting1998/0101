@@ -21,12 +21,17 @@
       createUI();
   }
 
+
+
+//获取绘图区绘图对象的指针
   DrawWidget *CenterFrame::insideWidget() const
   {
       return drawWidget;
   }
 
 
+
+  //绘图框的用户命令区
   void CenterFrame::createUserCommandArea()
   {
 
@@ -34,16 +39,18 @@
       group = new QGroupBox(this);
       group->setTitle(tr("选项"));
 
-      int btnWidth=32;
-      int btnHeight=32;
+      int btnWidth=32;//按纽宽度
+      int btnHeight=32;//按纽高度
       // 准备绘制按钮图标
       QPixmap p(btnWidth-2, btnHeight-2);
-      QPainter painter(&p);
-      QPen pen(FOREGROUND_COLOR);  //设置按钮颜色
-      pen.setWidthF(2);
-      pen.setStyle(Qt::DotLine);
-      painter.setRenderHint(QPainter::Antialiasing);
-      painter.setPen(pen);
+      QPainter painter(&p);//定义一个绘图对象
+      QPen pen(FOREGROUND_COLOR);  //设置画笔颜色
+      pen.setWidthF(2);//初始化画笔宽度
+      pen.setStyle(Qt::DotLine);//初始化画笔风格
+      painter.setRenderHint(QPainter::Antialiasing);//设置反走样，抗锯齿渲染
+      painter.setPen(pen);//设置画笔
+
+
 
       // 矩形按钮
       btnRect = new QPushButton(group);
@@ -54,8 +61,10 @@
               this,&CenterFrame::on_btnRectClicked);
 
       p.fill(BACKGROUND_COLOR);
-      painter.drawRect(3,3,p.size().width()-2*3,p.size().height()-2*3);
+      painter.drawRect(3,3,p.size().width()-2*3,p.size().height()-2*3);//绘制矩形
       btnRect->setIcon (QIcon(p));
+
+
 
       // 圆形按钮
       btnEllipse = new QPushButton(group);
@@ -69,17 +78,22 @@
      connect(btnEllipse,&QPushButton::clicked,
               this,&CenterFrame::on_btnEllipseClicked);
 
+
+
       // 直线按钮
       btnLine = new QPushButton(group);
       btnLine->setToolTip("绘制直线");
       btnLine->setCheckable(true);
-      btnLine->setIconSize(p.size());
+      btnLine->setIconSize(p.size());//按钮大小
 
-      p.fill(BACKGROUND_COLOR);
-     painter.drawLine(3+3,p.size().height()-2*3,p.size().width()-2*3,3+3);
-     btnLine->setIcon (QIcon(p));
+     p.fill(BACKGROUND_COLOR);
+     painter.drawLine(3+3,p.size().height()-2*3,p.size().width()-2*3,3+3);//绘制线
+     btnLine->setIcon (QIcon(p));//设置按钮
      connect(btnLine,&QPushButton::clicked,
              this,&CenterFrame::on_btnLineClicked);
+
+
+
 
      // 三角形
      btnTriangle = new QPushButton(group);
@@ -97,10 +111,12 @@
 
      // 使用drawLines时需要注意，点数必须为偶数，两两成对作为一个边
      // 如果是奇数，最后一个点会被舍弃
-     painter.drawLines(pts);
+     painter.drawLines(pts);//绘制多条线
      btnTriangle->setIcon (QIcon(p));
      connect(btnTriangle,&QPushButton::clicked,
              this,&CenterFrame::on_btnTriangleClicked);
+
+
 
      // 文本按钮
      btnText = new QPushButton(group);
@@ -135,29 +151,30 @@
      QVector<QPointF> ptb;
      ptb<<pt7<<pt4<<pt4<<pt5<<pt5<<pt6<<pt6<<pt7;
 
-
      painter.drawPolygon(ptb);
      btnDiamond->setIcon (QIcon(p));
      connect(btnDiamond,&QPushButton::clicked,
              this,&CenterFrame::on_btnDiamondClicked);
 
+
+
      //绘制图片
-     bthDrawpic= new QPushButton(group);
-     bthDrawpic ->setToolTip("绘制图片");
-     bthDrawpic ->setCheckable(true);
-     bthDrawpic ->setIconSize(p.size());
+     btnDrawpic= new QPushButton(group);
+     btnDrawpic ->setToolTip("绘制图片");
+     btnDrawpic ->setCheckable(true);
+     btnDrawpic ->setIconSize(p.size());
 
      p.fill(BACKGROUND_COLOR);
      QImage image(":/new/prefix1/1.png");//图标
      QRect targetRect(0,0,p.size().width(),p.size().height());
      QRect sourceRect =image.rect();
      painter.drawImage(targetRect,image,sourceRect);
-     bthDrawpic->setIcon (QIcon(p));
-     connect(bthDrawpic,&QPushButton::clicked,
+     btnDrawpic->setIcon (QIcon(p));
+     connect(btnDrawpic,&QPushButton::clicked,
              this, &CenterFrame::on_btnDrawpicClicked);
 
 
-     // 选项Group布局
+     // 选项Group布局,在布局中添加控件
      QGridLayout *gridLayout = new QGridLayout();
      gridLayout->addWidget(btnRect,0,0);
      gridLayout->addWidget(btnEllipse,0,1);
@@ -165,45 +182,48 @@
      gridLayout->addWidget(btnLine,1,1);
      gridLayout->addWidget(btnText,2,1);
      gridLayout->addWidget(btnDiamond,2,0);
-     gridLayout->addWidget(bthDrawpic,3,0);
+     gridLayout->addWidget(btnDrawpic,3,0);
      gridLayout->setMargin(3);
      gridLayout->setSpacing(3);
      group->setLayout(gridLayout);
  }
 
 
- void CenterFrame::createUI()
- {
 
-     edtText = new QLineEdit();
-     edtText->setToolTip(tr("输入需要绘制的文本"));   // 设置工具提示
-     edtText->setVisible(false);                     //  初始时，文本框设为隐藏
-     edtText->setClearButtonEnabled(true);           //  在编辑框中显示一个清除按键
-     edtText->setMaximumWidth(91);
-     // textEdited信号与textChanged信号类似，
-     // 区别是前者只在外部编辑时发出，setText等内部函数修改文本时，该信号不会发射
-     // textChanged信号只要是文本发生变化都会反射，无论是否是内部函数修改
-     connect(edtText,&QLineEdit::textEdited,
-             this,&CenterFrame::on_edtTextEdited);   // 连接文本输入时的处理槽函数
-     // 右侧垂直布局
-     vLayout = new QVBoxLayout();
-     vLayout->addWidget(group);
-     vLayout->addWidget(edtText);
-     vLayout->addStretch();
-     vLayout->setMargin(5);
+//用户绘图区
+
+  void CenterFrame::createUI()
+  {
+
+      edtText = new QLineEdit();
+      edtText->setToolTip(tr("输入需要绘制的文本"));   // 设置工具提示
+      edtText->setVisible(false);                     //  初始时，文本框设为隐藏
+      edtText->setClearButtonEnabled(true);           //  在编辑框中显示一个清除按键
+      edtText->setMaximumWidth(91);
+      // textEdited信号与textChanged信号类似，
+      // 区别是前者只在外部编辑时发出，setText等内部函数修改文本时，该信号不会发射
+      // textChanged信号只要是文本发生变化都会反射，无论是否是内部函数修改
+      connect(edtText,&QLineEdit::textEdited,
+              this,&CenterFrame::on_edtTextEdited);   // 连接文本输入时的处理槽函数
+      // 右侧垂直布局
+      vLayout = new QVBoxLayout();
+      vLayout->addWidget(group);
+      vLayout->addWidget(edtText);
+      vLayout->addStretch();
+      vLayout->setMargin(5);
 
 
-     // 创建绘图区
-     drawWidget = new DrawWidget(this);    //新建一个drawWidget对象
+      // 创建绘图区
+      drawWidget = new DrawWidget(this);    //新建一个drawWidget对象
 
-     //水平布局
-     hLayout = new QHBoxLayout();
-     hLayout->addWidget(drawWidget);
-     hLayout->addLayout(vLayout);
-     hLayout->setStretch(0,1);
-     hLayout->setStretch(1,0);
-     hLayout->setMargin(0);
-     hLayout->setSpacing(0);
+      //水平布局
+      hLayout = new QHBoxLayout();
+      hLayout->addWidget(drawWidget);
+      hLayout->addLayout(vLayout);//在布局中插入子布局
+      hLayout->setStretch(0,1);
+      hLayout->setStretch(1,0);
+      hLayout->setMargin(0);
+      hLayout->setSpacing(0);
 
      setLayout(hLayout);
 
@@ -231,6 +251,9 @@
 
  }
 
+
+
+//更新按键状态
 void CenterFrame::updateButtonStatus()
  {
      // 首先将所有按键复位
@@ -238,9 +261,10 @@ void CenterFrame::updateButtonStatus()
      btnLine->setChecked(false);
      btnTriangle->setChecked(false);
      btnEllipse->setChecked(false);
-    // bthDiamond->setChecked(false);
+     btnDiamond->setChecked(false);
      btnText->setChecked(false);
      edtText->setVisible(false);
+     btnDrawpic->setChecked(false);
 
      // 然后根据设置的绘图类型重新切换按键状态
      switch (drawWidget->shapeType()) {
@@ -256,14 +280,16 @@ void CenterFrame::updateButtonStatus()
      case ST::Triangle:
         btnTriangle->setChecked(true);
         break;
-    // case ST::Diamond:
-        //bthDiamond->setChecked(true);
-        //break;
-
+    case ST::Diamond:
+        btnDiamond->setChecked(true);
+        break;
      case ST::Text:
          btnText->setChecked(true);
          edtText->setVisible(true);      // 使编辑框可见
          edtText->setFocus();            // 编辑框获得输入焦点
+         break;
+     case ST::picture:
+         btnDrawpic->setChecked(true);
          break;
      default:
          break;
@@ -272,21 +298,26 @@ void CenterFrame::updateButtonStatus()
 
 
 
+//槽函数
+//改变画笔风格
  void CenterFrame::setPenStyle(int penStyle)
  {
      drawWidget->setStyle(penStyle);
  }
 
+ //改变画笔宽度
  void CenterFrame::setPenWidth(int width)
  {
      drawWidget->setWidth(width);
  }
 
+ //改变画笔颜色
  void CenterFrame::setPenColor(QColor color)
  {
      drawWidget->setColor(color);
  }
 
+ //清除当前绘图
  void CenterFrame::clearPaint()
  {
      drawWidget->clear();
@@ -336,6 +367,7 @@ void CenterFrame::updateButtonStatus()
      }
  }
 
+ //绘制文本响应槽函数
  void CenterFrame::on_btnTextClicked()
  {
 
@@ -346,6 +378,7 @@ void CenterFrame::updateButtonStatus()
          drawWidget->setShapeType(ST::None);
      }
  }
+ //输入文本响应槽函数
  void CenterFrame::on_edtTextEdited(const QString &text)
  {
      drawWidget->setDrawnText(text);
@@ -367,7 +400,7 @@ void CenterFrame::on_btnDiamondClicked()
 //绘制图片按键响应槽函数
 void CenterFrame::on_btnDrawpicClicked()
 {
-      if(bthDrawpic->isChecked())
+      if(btnDrawpic->isChecked())
       {
           drawWidget->setShapeType(ST::picture);
           drawWidget->drawpic();
